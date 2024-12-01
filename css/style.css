@@ -149,7 +149,7 @@ nav .navlinks li a{
     transition: 0.5s;
 }
 .hero-text .social i:hover{
-    color:#007ced;
+    color:#6187aa;
     transform: rotate(360deg);
 }
 /* Respnosiv design & displaying navbar for small screen */
@@ -213,3 +213,13 @@ nav .navlinks li a{
         padding:40px 0px;
     }
 }
+.footer {
+    padding-top: 1%;
+    padding-bottom: 1%;
+    background-color: #04274b;
+    color: #f1f1f1;
+  }
+  
+  .copyright {
+    background-color: #0f3457;
+  }
