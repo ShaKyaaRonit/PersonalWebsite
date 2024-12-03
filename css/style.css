@@ -46,10 +46,16 @@ header{
     text-align: center;
     
 }
+.logo-image {
+    width: 50px;  
+    height: auto; 
+    border-radius: 10%;
+    transition: transform 0.3s ease-in-out; 
+}
 .logo .logo-text{
     font-size: 24px;
     font-weight: 500;
-    color:#fff;
+    color:#c4bcf4;
 }
 nav .togglebtn{
     width: 35px;
@@ -219,7 +225,6 @@ nav .navlinks li a{
     background-color: #04274b;
     color: #f1f1f1;
   }
-  
   .copyright {
     background-color: #0f3457;
   }
