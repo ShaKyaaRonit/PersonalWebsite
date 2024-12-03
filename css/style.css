@@ -120,11 +120,11 @@ nav .navlinks li a{
     font-size: 14px;
 }
 .hero-text h5 span{
-    color:#007ced;
+    color:#e5e5e5;
     font-size: 16px;
 }
 .hero-text h1{
-    color: #007ced;
+    color: #e5e5e5;
     font-size: 3rem;
 }
 .hero-text p{
@@ -146,7 +146,7 @@ nav .navlinks li a{
     box-shadow:  0 10px 10px -8px rgb(0 0 0 / 78%);
 }
 .btn.active{
-    border-color: #007ced;
+    border-color: #e5e5e5;
 }
 .hero-text .social i{
     color: #e5e5e5;
@@ -155,7 +155,7 @@ nav .navlinks li a{
     transition: 0.8s;
 }
 .hero-text .social i:hover{
-    color:#6187aa;
+    color:#e5e5e5;
     transform: rotate(360deg);
 }
 .hero-text .social j{
@@ -165,7 +165,7 @@ nav .navlinks li a{
     transition: 0.8s;
 }
 .hero-text .social j:hover{
-    color:#6187aa;
+    color:#e5e5e5;
     transform: rotate(360deg);
 }
 .hero-text .social k{
@@ -175,7 +175,7 @@ nav .navlinks li a{
     transition: 0.8s;
 }
 .hero-text .social k:hover{
-    color:#6187aa;
+    color:#e5e5e5;
     transform: rotate(360deg);
 }
 /* Respnosiv design & displaying navbar for small screen */
@@ -242,9 +242,9 @@ nav .navlinks li a{
 .footer {
     padding-top: 1%;
     padding-bottom: 1%;
-    background-color: #04274b;
+    background-color: #02070b;
     color: #f1f1f1;
   }
   .copyright {
-    background-color: #0f3457;
+    background-color: #e5e5e5;
   }
