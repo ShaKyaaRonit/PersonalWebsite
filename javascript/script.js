@@ -6,7 +6,7 @@
     });
 
 // date ,time and Year yohoo!
-const footerDate = document.querySelector('.footer h4');
+const footerDate = document.querySelector('.footer h5');
 function updateDateTime() {
   const now = new Date();
   const year = now.getFullYear();
