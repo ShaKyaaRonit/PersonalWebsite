@@ -1,9 +1,10 @@
-    document.addEventListener('contextmenu', function(e) {
+//   img proctection is what you need bruh
+  document.addEventListener('contextmenu', function(e) {
       if (e.target.tagName === 'IMG') {
         e.preventDefault();
       }
     });
-
+// date ,time and Year yohoo!
 const footerDate = document.querySelector('.footer h5');
 
 function updateDateTime() {
@@ -19,4 +20,8 @@ function updateDateTime() {
 updateDateTime();
 setInterval(updateDateTime, 60000); // Update every minute
 
-
+// you know it is unnecessary why not get it a try
+const scroll = new LocomotiveScroll({
+    el: document.querySelector('.main-container'),
+    smooth: true
+});
