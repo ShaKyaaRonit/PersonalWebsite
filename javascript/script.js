@@ -4,6 +4,7 @@
         e.preventDefault();
       }
     });
+
 // date ,time and Year yohoo!
 const footerDate = document.querySelector('.footer h5');
 
@@ -18,12 +19,11 @@ function updateDateTime() {
 }
 
 updateDateTime();
-setInterval(updateDateTime, 60000); // Update every minute
+setInterval(updateDateTime, 60000); 
 
-// you know it is unnecessary why not get it a try
-if (window.innerWidth > 768) {
-    const scroll = new LocomotiveScroll({
-        el: document.querySelector('.main-container'),
-        smooth: true
-    });
-}
+
+//loco tere muh pe choco
+const scroll = new LocomotiveScroll({
+  el: document.querySelector(".home"),
+  smooth: true,
+});
