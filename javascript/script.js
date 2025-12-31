@@ -21,7 +21,9 @@ updateDateTime();
 setInterval(updateDateTime, 60000); // Update every minute
 
 // you know it is unnecessary why not get it a try
-const scroll = new LocomotiveScroll({
-    el: document.querySelector('.main-container'),
-    smooth: true
-});
+if (window.innerWidth > 768) {
+    const scroll = new LocomotiveScroll({
+        el: document.querySelector('.main-container'),
+        smooth: true
+    });
+}
