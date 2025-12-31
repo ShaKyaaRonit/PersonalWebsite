@@ -97,7 +97,8 @@
     display:flex;
     justify-content: space-between; 
 }
-.footer h4{
+.footer h5{
+    font-size: medium;
     font-weight: lighter;
 }
 #social {
