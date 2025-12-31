@@ -16,6 +16,7 @@
 }
 #nav{
     padding: 15px;
+    padding-left: calc(50px + 6vw);
     display: flex;
     justify-content:space-between;
     text-transform: uppercase;
@@ -25,7 +26,7 @@
     text-decoration: none;
     color:black;
     font-size: larger;
-    padding-right:100px;
+    padding-right:20px;
 }
 
 .content{
@@ -40,6 +41,7 @@
   height:fit-content;
   justify-content: space-between;
   align-content: center;
+  background-color: aqua;
 }
 
 #leftsection  {
@@ -70,8 +72,8 @@
     width:50vw;
     border-radius: 500px;
     height: 35vw;
-    object-fit: cover;
-}
+    object-fit: cover;    margin: 0 auto;
+    display: block;}
 
 .button {
   margin-top: 30px;
@@ -106,4 +108,115 @@
     
     text-decoration: none;
     color:black;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    #nav {
+        padding: 10px;
+        padding-left: calc(20px + 20px);
+    }
+    
+    #nav a {
+        padding-right: 20px;
+        font-size: medium;
+    }
+    
+    .content {
+        padding: 20px;
+    }
+    
+    #god {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #leftsection {
+        padding: 20px;
+        text-align: center;
+        order: 2; /* Image first on mobile */
+    }
+    
+    #leftsection h1 {
+        font-size: 2em;
+    }
+    
+    #leftsection p {
+        font-size: 16px;
+    }
+    
+    #rightsection {
+        order: 1; /* Image first */
+    }
+    
+    #rightsection img {
+        width: 60vw;
+        height: auto;
+        padding: 20px;
+        border-radius: 50%;
+    }
+    
+    .button button {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+    
+    .footer {
+        height: auto;
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    #social {
+        justify-content: center;
+        gap: 20px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    #nav {
+        padding: 8px;
+        padding-left: calc(15px + 15px);
+    }
+    
+    #nav a {
+        padding-right: 10px;
+        font-size: small;
+    }
+    
+    .content {
+        padding: 15px;
+    }
+    
+    #leftsection {
+        padding: 15px;
+    }
+    
+    #leftsection h1 {
+        font-size: 1.5em;
+    }
+    
+    #leftsection p {
+        font-size: 14px;
+    }
+    
+    #rightsection img {
+        width: 60vw;
+        padding: 15px;
+    }
+    
+    .button button {
+        font-size: 12px;
+        padding: 8px 16px;
+    }
+    
+    .footer {
+        padding: 10px;
+    }
+    
+    #social {
+        gap: 15px;
+    }
 }
