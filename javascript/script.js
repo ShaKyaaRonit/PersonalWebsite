@@ -6,7 +6,7 @@
     });
 
 // date ,time and Year yohoo!
-const footerDate = document.querySelector('.footer h5');
+const footerDate = document.querySelector('.footer h4');
 
 function updateDateTime() {
   const now = new Date();
@@ -15,7 +15,7 @@ function updateDateTime() {
   const day = now.getDate().toString().padStart(2, '0');
   const hours = now.getHours().toString().padStart(2, '0');
   const minutes = now.getMinutes().toString().padStart(2, '0');
-  footerDate.textContent = `${year} | ${month} ${day} | ${hours}.${minutes}`;
+  footerDate.textContent = `${year} | ${month} ${day} | ${hours}:${minutes}`;
 }
 
 updateDateTime();
