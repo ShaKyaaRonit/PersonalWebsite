@@ -20,10 +20,3 @@ function updateDateTime() {
 
 updateDateTime();
 setInterval(updateDateTime, 60000); 
-
-
-//loco tere muh pe choco
-const scroll = new LocomotiveScroll({
-  el: document.querySelector(".home"),
-  smooth: true,
-});
