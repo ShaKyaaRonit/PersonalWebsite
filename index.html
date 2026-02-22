@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description"
+    content="Ronit Shakya – Web Developer building exceptional digital experiences. Frontend & full-stack.">
+  <meta name="keywords" content="Ronit Shakya, Web Developer, Frontend, Full-stack, Portfolio">
+  <meta name="author" content="Ronit Shakya">
+  <meta property="og:title" content="Ronit Shakya | Web Developer Portfolio">
+  <meta property="og:description" content="Building exceptional digital experiences with modern technologies.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" href="./assets/logo.ico">
+  <title>Ronit Shakya | Web Developer Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&family=Dancing+Script:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.8.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/global.css">
+</head>
+
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <div class="main-container">
+    <header class="header">
+      <nav id="nav" class="nav" role="navigation">
+        <a href="#" class="nav-brand"><span class="nav-greeting">JOJOPALA</span></a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i class="ri-menu-line nav-icon-menu"></i>
+          <i class="ri-close-line nav-icon-close"></i>
+        </button>
+        <div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
+        <div class="nav-right" id="navMenu">
+          <a href="index.html" class="nav-link">Home</a>
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+            <i class="ri-moon-line theme-icon-moon"></i>
+            <i class="ri-sun-line theme-icon-sun"></i>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main" class="main">
+      <section class="hero">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <p class="hero-label" data-animate>Web Developer</p>
+            <h1 class="hero-title" data-animate>Ronit<br>Shakya</h1>
+            <p class="hero-desc" data-animate>I build exceptional digital experiences with modern frontend technologies.
+              Expanding into backend development to become a full-stack developer.</p>
+            <a href="mailto:shkronit@gmail.com" class="btn-primary" data-animate>
+              Get in touch <i class="ri-arrow-right-up-line"></i>
+            </a>
+          </div>
+          <div class="hero-visual" data-animate>
+            <div class="hero-image-wrap">
+              <div class="hero-image-frame">
+                <img src="./assets/img.jpg" alt="Ronit Shakya" draggable="false" ondragstart="return false;"
+                  id="heroImage">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer" id="footer" role="contentinfo">
+      <span class="footer-time" id="footerDateTime">Year | Date | Time</span>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/in/ronit-shakya-9909b4332/" target="_blank" rel="noopener noreferrer"
+          aria-label="LinkedIn"><i class="ri-linkedin-box-fill"></i></a>
+        <a href="https://github.com/ShaKyaaRonit" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i
+            class="ri-github-fill"></i></a>
+        <a href="https://www.instagram.com/shak_ya_ronit/" target="_blank" rel="noopener noreferrer"
+          aria-label="Instagram"><i class="ri-instagram-fill"></i></a>
+      </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="Back to top" title="Back to top">
+      <i class="ri-arrow-up-s-line"></i>
+    </button>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="./javascript/script.js"></script>
+</body>
+
+</html>
