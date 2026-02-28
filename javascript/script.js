@@ -6,6 +6,15 @@ document.addEventListener('contextmenu', (e) => {
 const navToggle = document.getElementById('navToggle');
 const navMenu = document.getElementById('navMenu');
 const navOverlay = document.getElementById('navOverlay');
+const header = document.querySelector('.header');
+
+function syncHeaderOffset() {
+  if (!header) return;
+  document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+}
+syncHeaderOffset();
+window.addEventListener('load', syncHeaderOffset);
+window.addEventListener('resize', syncHeaderOffset);
 
 function closeNav() {
   navMenu?.classList.remove('open');
