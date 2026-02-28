@@ -11,6 +11,7 @@ const preloader = document.getElementById('site-preloader');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let smoothScrollRaf = null;
 let preloaderDone = false;
+const preloadStartedAt = window.__siteLoadStart || performance.now();
 
 function finishPreload() {
   if (preloaderDone) return;
@@ -20,20 +21,17 @@ function finishPreload() {
 }
 
 function hidePreloader() {
-  const preloadStartedAt = window.__siteLoadStart || 0;
-  const minVisibleMs = 450;
+  const minVisibleMs = 1100;
   const elapsed = performance.now() - preloadStartedAt;
   const delay = Math.max(0, minVisibleMs - elapsed);
   window.setTimeout(finishPreload, delay);
 }
 
-if (document.readyState === 'complete') {
-  hidePreloader();
-} else {
-  window.addEventListener('load', hidePreloader, { once: true });
-}
-window.addEventListener('pageshow', finishPreload, { once: true });
-window.setTimeout(finishPreload, 4000);
+if (document.readyState === 'complete' || document.readyState === 'interactive') hidePreloader();
+document.addEventListener('DOMContentLoaded', hidePreloader, { once: true });
+window.addEventListener('load', hidePreloader, { once: true });
+window.addEventListener('pageshow', hidePreloader, { once: true });
+window.setTimeout(finishPreload, 6000);
 
 function syncHeaderOffset() {
   if (!header) return;

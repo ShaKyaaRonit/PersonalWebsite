@@ -63,6 +63,10 @@ html.is-loading .main-container {
   visibility: hidden;
 }
 
+html.is-loading .skip-link {
+  visibility: hidden;
+}
+
 .site-preloader {
   position: fixed;
   inset: 0;
