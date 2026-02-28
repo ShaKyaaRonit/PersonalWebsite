@@ -231,7 +231,7 @@ if (heroImage && heroFrame && !prefersReducedMotion) {
 
 // Music cursor + note burst for interactive elements
 const supportsHoverCursor = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-const interactiveTargets = document.querySelectorAll('a, button, .btn-primary');
+const interactiveSelector = 'a, button, .btn-primary';
 
 function spawnNoteBurst(x, y, count = 6) {
   const notes = ['\u2669', '\u266A', '\u266B', '\u266C'];
@@ -254,28 +254,43 @@ if (supportsHoverCursor) {
   musicCursor.className = 'music-cursor';
   musicCursor.innerHTML = '<i class="ri-music-2-fill" aria-hidden="true"></i>';
   document.body.appendChild(musicCursor);
+  let hoverInteractive = null;
 
-  document.addEventListener('mousemove', (e) => {
+  const setInteractiveHover = (target) => {
+    if (hoverInteractive === target) return;
+    if (hoverInteractive) hoverInteractive.classList.remove('music-hover-target');
+    hoverInteractive = target;
+    if (hoverInteractive) {
+      hoverInteractive.classList.add('music-hover-target');
+      musicCursor.classList.add('visible');
+    } else {
+      musicCursor.classList.remove('visible');
+    }
+  };
+
+  document.addEventListener('pointermove', (e) => {
     musicCursor.style.left = `${e.clientX + 14}px`;
     musicCursor.style.top = `${e.clientY + 12}px`;
   });
 
-  interactiveTargets.forEach((target) => {
-    target.addEventListener('mouseenter', () => {
-      musicCursor.classList.add('visible');
-      target.classList.add('music-hover-target');
-    });
-    target.addEventListener('mouseleave', () => {
-      musicCursor.classList.remove('visible');
-      target.classList.remove('music-hover-target');
-    });
+  document.addEventListener('pointerover', (e) => {
+    const target = e.target.closest(interactiveSelector);
+    if (target) setInteractiveHover(target);
+  });
+
+  document.addEventListener('pointerout', (e) => {
+    if (!hoverInteractive) return;
+    const next = e.relatedTarget;
+    if (next && hoverInteractive.contains(next)) return;
+    const nextInteractive = next?.closest?.(interactiveSelector) || null;
+    setInteractiveHover(nextInteractive);
   });
 }
 
-interactiveTargets.forEach((target) => {
-  target.addEventListener('click', (e) => {
-    const x = e.clientX || window.innerWidth / 2;
-    const y = e.clientY || window.innerHeight / 2;
-    spawnNoteBurst(x, y, 6);
-  });
+document.addEventListener('click', (e) => {
+  const target = e.target.closest(interactiveSelector);
+  if (!target) return;
+  const x = e.clientX || window.innerWidth / 2;
+  const y = e.clientY || window.innerHeight / 2;
+  spawnNoteBurst(x, y, 6);
 });
