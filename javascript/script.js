@@ -7,6 +7,8 @@ const navToggle = document.getElementById('navToggle');
 const navMenu = document.getElementById('navMenu');
 const navOverlay = document.getElementById('navOverlay');
 const header = document.querySelector('.header');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let smoothScrollRaf = null;
 
 function syncHeaderOffset() {
   if (!header) return;
@@ -24,12 +26,53 @@ function closeNav() {
   document.body.style.overflow = '';
 }
 
+function smoothScrollToY(targetY, duration = 650) {
+  const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  const finalY = Math.min(Math.max(targetY, 0), maxScroll);
+
+  if (prefersReducedMotion) {
+    window.scrollTo(0, finalY);
+    return;
+  }
+
+  if (smoothScrollRaf) cancelAnimationFrame(smoothScrollRaf);
+
+  const startY = window.scrollY;
+  const distance = finalY - startY;
+  if (Math.abs(distance) < 1) {
+    window.scrollTo(0, finalY);
+    return;
+  }
+
+  const startTime = performance.now();
+  const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+  const step = (now) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easeInOutCubic(progress);
+    window.scrollTo(0, startY + distance * eased);
+    if (progress < 1) {
+      smoothScrollRaf = requestAnimationFrame(step);
+    } else {
+      smoothScrollRaf = null;
+    }
+  };
+
+  smoothScrollRaf = requestAnimationFrame(step);
+}
+
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener('click', function (e) {
     const href = this.getAttribute('href');
     if (href === '#') return;
+    const target = document.querySelector(href);
+    if (!target) return;
     e.preventDefault();
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const headerOffset = header?.offsetHeight || 0;
+    const targetY = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+    smoothScrollToY(targetY);
+    if (history.replaceState) history.replaceState(null, '', href);
     closeNav();
   });
 });
@@ -71,11 +114,9 @@ navOverlay?.addEventListener('click', closeNav);
 // Back to top
 const backToTop = document.getElementById('backToTop');
 window.addEventListener('scroll', () => backToTop?.classList.toggle('visible', window.scrollY > 300));
-backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+backToTop?.addEventListener('click', () => smoothScrollToY(0));
 
 // === GSAP Animations ===
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !prefersReducedMotion) {
   gsap.registerPlugin(ScrollTrigger);
 

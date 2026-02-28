@@ -1,0 +1,29 @@
+{
+  "name": "personalwebsite",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sync:vendor": "rm -rf vendor/gsap vendor/remixicon/fonts vendor/fontsource/dm-sans vendor/fontsource/syne && mkdir -p vendor/gsap vendor/remixicon vendor/fontsource && cp node_modules/gsap/dist/gsap.min.js vendor/gsap/ && cp node_modules/gsap/dist/ScrollTrigger.min.js vendor/gsap/ && cp -R node_modules/remixicon/fonts vendor/remixicon/ && cp -R node_modules/@fontsource/dm-sans vendor/fontsource/dm-sans && cp -R node_modules/@fontsource/syne vendor/fontsource/syne",
+    "postinstall": "npm run sync:vendor",
+    "check:js": "node --check javascript/script.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShaKyaaRonit/PersonalWebsite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShaKyaaRonit/PersonalWebsite/issues"
+  },
+  "homepage": "https://github.com/ShaKyaaRonit/PersonalWebsite#readme",
+  "dependencies": {
+    "@fontsource/dm-sans": "^5.2.8",
+    "@fontsource/syne": "^5.2.7",
+    "gsap": "^3.14.2",
+    "remixicon": "^4.9.1"
+  }
+}
