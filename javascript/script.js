@@ -165,66 +165,53 @@ if (heroImage && heroFrame && !prefersReducedMotion) {
   });
 }
 
-// === Music Melody Cursor & Click Animation ===
-const musicalNotes = ['\u2669', '\u266A', '\u266B', '\u266C']; // ♩, ♪, ♫, ♬
+// Music cursor + note burst for interactive elements
+const supportsHoverCursor = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+const interactiveTargets = document.querySelectorAll('a, button, .btn-primary');
 
-// Custom Cursor
-const cursor = document.createElement('div');
-cursor.className = 'music-cursor';
-cursor.style.cssText = `
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  font-size: 24px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  user-select: none;
-`;
-cursor.textContent = '\u266B';
-document.body.appendChild(cursor);
-
-let cursorUpdatePending = false;
-document.addEventListener('mousemove', (e) => {
-  if (!cursorUpdatePending) {
-    requestAnimationFrame(() => {
-      cursor.style.transform = `translate(${e.clientX + 10}px, ${e.clientY + 10}px)`;
-      cursor.style.opacity = '1';
-      cursorUpdatePending = false;
-    });
-    cursorUpdatePending = true;
-  }
-});
-
-// Click Melody Animation
-document.addEventListener('click', (e) => {
-  const isButton = e.target.closest('button, a, .btn-primary');
-
-  // Always spawn a few notes, maybe more for buttons
-  const noteCount = isButton ? 6 : 2;
-
-  for (let i = 0; i < noteCount; i++) {
-    const note = document.createElement('div');
+function spawnNoteBurst(x, y, count = 6) {
+  const notes = ['\u2669', '\u266A', '\u266B', '\u266C'];
+  for (let i = 0; i < count; i += 1) {
+    const note = document.createElement('span');
     note.className = 'note-particle';
-    note.textContent = musicalNotes[Math.floor(Math.random() * musicalNotes.length)];
-    note.style.cssText = `
-      position: fixed;
-      left: ${e.clientX}px;
-      top: ${e.clientY}px;
-      pointer-events: none;
-      z-index: 9998;
-      font-size: ${16 + Math.random() * 12}px;
-      user-select: none;
-    `;
+    note.textContent = notes[Math.floor(Math.random() * notes.length)];
+    note.style.left = `${x}px`;
+    note.style.top = `${y}px`;
+    note.style.setProperty('--x', `${(Math.random() - 0.5) * 140}px`);
+    note.style.setProperty('--y', `${-50 - Math.random() * 110}px`);
+    note.style.setProperty('--r', `${(Math.random() - 0.5) * 70}deg`);
     document.body.appendChild(note);
-
-    gsap.to(note, {
-      x: (Math.random() - 0.5) * 150,
-      y: -100 - Math.random() * 100,
-      rotation: (Math.random() - 0.5) * 90,
-      opacity: 0,
-      duration: 1 + Math.random(),
-      ease: 'power1.out',
-      onComplete: () => note.remove()
-    });
+    note.addEventListener('animationend', () => note.remove(), { once: true });
   }
+}
+
+if (supportsHoverCursor) {
+  const musicCursor = document.createElement('div');
+  musicCursor.className = 'music-cursor';
+  musicCursor.innerHTML = '<i class="ri-music-2-fill" aria-hidden="true"></i>';
+  document.body.appendChild(musicCursor);
+
+  document.addEventListener('mousemove', (e) => {
+    musicCursor.style.left = `${e.clientX + 14}px`;
+    musicCursor.style.top = `${e.clientY + 12}px`;
+  });
+
+  interactiveTargets.forEach((target) => {
+    target.addEventListener('mouseenter', () => {
+      musicCursor.classList.add('visible');
+      target.classList.add('music-hover-target');
+    });
+    target.addEventListener('mouseleave', () => {
+      musicCursor.classList.remove('visible');
+      target.classList.remove('music-hover-target');
+    });
+  });
+}
+
+interactiveTargets.forEach((target) => {
+  target.addEventListener('click', (e) => {
+    const x = e.clientX || window.innerWidth / 2;
+    const y = e.clientY || window.innerHeight / 2;
+    spawnNoteBurst(x, y, 6);
+  });
 });
