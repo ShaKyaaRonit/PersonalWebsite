@@ -33,6 +33,13 @@ window.addEventListener('load', hidePreloader, { once: true });
 window.addEventListener('pageshow', hidePreloader, { once: true });
 window.setTimeout(finishPreload, 6000);
 
+function clearMainHashFromUrl() {
+  if (window.location.hash !== '#main' || !history.replaceState) return;
+  history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+}
+clearMainHashFromUrl();
+window.addEventListener('hashchange', clearMainHashFromUrl);
+
 function syncHeaderOffset() {
   if (!header) return;
   document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
@@ -95,7 +102,6 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     const headerOffset = header?.offsetHeight || 0;
     const targetY = target.getBoundingClientRect().top + window.scrollY - headerOffset;
     smoothScrollToY(targetY);
-    if (history.replaceState) history.replaceState(null, '', href);
     closeNav();
   });
 });
