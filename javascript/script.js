@@ -18,12 +18,21 @@ function finishPreload() {
   if (preloaderDone) return;
   preloaderDone = true;
   document.documentElement.classList.remove('is-loading');
-  
+
   if (preloader) {
+    const rect = startBtn ? startBtn.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    
+    // Massive Music Wipe Transition
+    if (typeof spawnNoteBurst === 'function') {
+      spawnNoteBurst(x, y, 25);
+    }
+    
     preloader.classList.add('is-hidden');
   }
-  
-  // Cinematic Timing: Delay entrance animations so they trigger precisely as the black screen cleanly glides up (500ms)
+
+  // Cinematic Timing: Delay entrance animations
   if (window.startDecodeSequence) {
     setTimeout(window.startDecodeSequence, 500);
   }
@@ -156,11 +165,36 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
 
   // These will be triggered from finishPreload() when the START button is clicked
   window.startDecodeSequence = () => {
-    // Hero entrance - smoother, premium feel
-    gsap.from('.hero-title', { opacity: 0, y: 40, duration: 1.2, ease: 'power3.out', delay: 0.1, clearProps: 'all' });
-    gsap.from('.hero-desc', { opacity: 0, y: 20, duration: 1, ease: 'power3.out', delay: 0.3, clearProps: 'all' });
-    gsap.from('.btn-primary', { opacity: 0, y: 15, duration: 0.8, ease: 'power3.out', delay: 0.5, clearProps: 'all' });
-    gsap.from('.hero-image-wrap', { opacity: 0, scale: 0.9, duration: 1.4, ease: 'expo.out', delay: 0.2, clearProps: 'all' });
+    // 1. Prepare Hero Title for Musical Stagger (Letter-by-letter)
+    const title = document.querySelector('.hero-title');
+    if (title) {
+        const text = title.innerHTML;
+        // Don't split if already split
+        if (!title.querySelector('.char-reveal')) {
+            const html = text.replace(/([^\s<br>])/g, "<span class='char-reveal' style='display:inline-block; opacity:0; transform:translateY(30px)'>$1</span>");
+            title.innerHTML = html;
+        }
+        
+        gsap.to(title.querySelectorAll('.char-reveal'), {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.05,
+            ease: 'back.out(1.7)',
+            onStart: () => {
+                // Occassional notes from title as it reveals
+                gsap.delayedCall(0.1, () => {
+                   const rect = title.getBoundingClientRect();
+                   if (typeof spawnNoteBurst === 'function') spawnNoteBurst(rect.left + 50, rect.top + 20, 3);
+                });
+            }
+        });
+    }
+
+    // 2. Other elements reveal
+    gsap.from('.hero-desc', { opacity: 0, y: 20, duration: 1, ease: 'power3.out', delay: 0.5 });
+    gsap.from('.btn-primary', { opacity: 0, y: 15, duration: 0.8, ease: 'power3.out', delay: 0.8 });
+    gsap.from('.hero-image-wrap', { opacity: 0, scale: 0.7, rotation: -10, duration: 1.5, ease: 'expo.out', delay: 0.3 });
   };
 
   // === Ultra-Premium Minh Pham Style Text Animations ===
@@ -169,11 +203,11 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
     const originalText = greeting.dataset.original || greeting.textContent.trim();
     greeting.dataset.original = originalText;
     greeting.innerHTML = '';
-    
+
     greeting.style.display = 'inline-flex';
     greeting.style.overflow = 'hidden';
     greeting.style.lineHeight = '1';
-    
+
     const chars = [...originalText].map(char => {
       const wrapper = document.createElement('span');
       wrapper.style.display = 'inline-flex';
@@ -181,21 +215,21 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
       wrapper.style.position = 'relative';
       wrapper.style.height = '1em';
       wrapper.style.minWidth = char.trim() === '' ? '0.5em' : 'auto';
-      
+
       const mainChar = document.createElement('span');
       mainChar.textContent = char;
       mainChar.style.height = '1em';
-      
+
       const hoverChar = document.createElement('span');
       hoverChar.textContent = char;
       hoverChar.style.position = 'absolute';
       hoverChar.style.top = '100%';
       hoverChar.style.color = 'var(--accent)';
-      
+
       wrapper.appendChild(mainChar);
       wrapper.appendChild(hoverChar);
       greeting.appendChild(wrapper);
-      
+
       return { wrapper, mainChar, hoverChar, char };
     });
 
@@ -208,7 +242,7 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
         chars.forEach((c, i) => {
           let iterations = 0;
           const maxIterations = 8 + (i * 3); // Staggered reveal
-          
+
           let scrambleInterval = setInterval(() => {
             if (iterations >= maxIterations) {
               clearInterval(scrambleInterval);
@@ -230,9 +264,9 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
     greeting.addEventListener('mouseenter', () => {
       chars.forEach((c, i) => {
         gsap.to([c.mainChar, c.hoverChar], {
-          y: '-100%', 
-          duration: 0.4, 
-          ease: 'power3.inOut', 
+          y: '-100%',
+          duration: 0.4,
+          ease: 'power3.inOut',
           delay: i * 0.03
         });
       });
@@ -241,9 +275,9 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
     greeting.addEventListener('mouseleave', () => {
       chars.forEach((c, i) => {
         gsap.to([c.mainChar, c.hoverChar], {
-          y: '0%', 
-          duration: 0.4, 
-          ease: 'power3.inOut', 
+          y: '0%',
+          duration: 0.4,
+          ease: 'power3.inOut',
           delay: i * 0.03
         });
       });
@@ -264,14 +298,14 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
   const particleContainer = document.createElement('div');
   particleContainer.className = 'ambient-particles';
   document.querySelector('.main-container')?.prepend(particleContainer);
-  
+
   const notes = ['\u2669', '\u266A', '\u266B', '\u266C', '\u2728'];
-  for(let i=0; i<12; i++) {
+  for (let i = 0; i < 12; i++) {
     const p = document.createElement('div');
     p.className = 'ambient-particle';
     p.textContent = notes[Math.floor(Math.random() * notes.length)];
     particleContainer.appendChild(p);
-    
+
     gsap.set(p, {
       x: () => Math.random() * window.innerWidth,
       y: () => window.innerHeight + Math.random() * 200,
@@ -279,7 +313,7 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
       opacity: () => 0.05 + Math.random() * 0.15,
       rotation: () => Math.random() * 360
     });
-    
+
     gsap.to(p, {
       y: () => -100,
       x: () => '+=' + (Math.random() * 100 - 50),
@@ -291,6 +325,8 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
     });
   }
 
+  // === Redundant burst listener removed to unify logic ===
+
   // === Magnetic Button ===
   const magneticBtn = document.querySelector('.btn-primary');
   if (magneticBtn) {
@@ -300,14 +336,14 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
       const v = rect.height / 2;
       const x = e.clientX - rect.left - h;
       const y = e.clientY - rect.top - v;
-      
+
       gsap.to(magneticBtn, {
         x: x * 0.3,
         y: y * 0.3,
         duration: 0.4,
         ease: 'power3.out'
       });
-      
+
       const icon = magneticBtn.querySelector('i');
       if (icon) {
         gsap.to(icon, { x: x * 0.2, y: y * 0.2, duration: 0.3, ease: 'power3.out' });
@@ -330,13 +366,13 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
       const rect = heroFrame.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      
+
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
-      
+
       const distanceX = x - centerX;
       const distanceY = y - centerY;
-      
+
       const rotateX = -distanceY * 0.08;
       const rotateY = distanceX * 0.08;
 
@@ -352,7 +388,7 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
       });
       // Add subtle glow tracing the mouse
       heroFrame.style.boxShadow = `${-rotateY}px ${rotateX}px 40px rgba(79, 70, 229, 0.4)`;
-      
+
       // Secondary parallax on the image inside for immense depth
       gsap.to(heroImage, {
         x: distanceX * 0.06,
@@ -373,7 +409,7 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
         duration: 1.2,
         ease: 'elastic.out(1, 0.3)'
       });
-      
+
       gsap.to(heroImage, {
         x: 0,
         y: 0,
@@ -416,7 +452,7 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
 const interactiveSelector = 'a, button, input, .btn-primary, .focus-visual, .nav-toggle, .theme-toggle, .work-link, .contact-link';
 
 function spawnNoteBurst(x, y, count = 6) {
-  const notes = ['\\u2669', '\\u266A', '\\u266B', '\\u266C'];
+  const notes = ['\u2669', '\u266A', '\u266B', '\u266C'];
   for (let i = 0; i < count; i += 1) {
     const note = document.createElement('span');
     note.className = 'note-particle';
@@ -437,8 +473,8 @@ if (typeof gsap !== 'undefined') {
   customCursor.innerHTML = '<i class="ri-music-2-fill" aria-hidden="true"></i>';
   document.body.appendChild(customCursor);
 
-  const cursorX = gsap.quickTo(customCursor, "x", {duration: 0.25, ease: "power3"});
-  const cursorY = gsap.quickTo(customCursor, "y", {duration: 0.25, ease: "power3"});
+  const cursorX = gsap.quickTo(customCursor, "x", { duration: 0.25, ease: "power3" });
+  const cursorY = gsap.quickTo(customCursor, "y", { duration: 0.25, ease: "power3" });
 
   gsap.set(customCursor, { xPercent: -50, yPercent: -50, x: window.innerWidth / 2, y: window.innerHeight / 2 });
 
@@ -481,12 +517,16 @@ if (typeof gsap !== 'undefined') {
   document.addEventListener('click', (e) => {
     const x = e.clientX || window.innerWidth / 2;
     const y = e.clientY || window.innerHeight / 2;
-    if (e.target.closest(interactiveSelector)) {
-      spawnNoteBurst(x, y, 9);
-      // Small pop without clearing props to avoid resetting X/Y coordinates
+    
+    // User requested: "not the text" click transition
+    if (e.target.closest('.hero-content')) return;
+
+    // Trigger big burst on "music" (image) and interactive elements
+    if (e.target.closest('.hero-visual, .custom-cursor, ' + interactiveSelector)) {
+      spawnNoteBurst(x, y, 12);
       gsap.fromTo(customCursor, { scale: 0.8 }, { scale: 1.25, duration: 0.4, ease: "elastic.out(1, 0.4)" });
     } else {
-      spawnNoteBurst(x, y, 4);
+      spawnNoteBurst(x, y, 6);
     }
   });
 
@@ -511,35 +551,5 @@ if (typeof gsap !== 'undefined') {
     });
   }
 
-  // === Ultra-Premium Text Lens Hover (Flawless X-Ray) ===
-  const heroTitle = document.querySelector('.hero-title');
-  if (heroTitle && customCursor) {
-    heroTitle.addEventListener('mouseenter', () => {
-      // Morph the cursor into a massive Glassmorphism X-Ray Lens
-      customCursor.classList.add('lens-active');
-      gsap.to(customCursor, { 
-        width: 180, 
-        height: 180, 
-        duration: 0.4, 
-        ease: 'back.out(1.2)' 
-      });
-      // Hide the music icon inside it
-      const icon = customCursor.querySelector('i');
-      if (icon) gsap.to(icon, { opacity: 0, scale: 0, duration: 0.2 });
-    });
-
-    heroTitle.addEventListener('mouseleave', () => {
-      // Snap it back to a beautiful music cursor
-      customCursor.classList.remove('lens-active');
-      gsap.to(customCursor, { 
-        width: 20, 
-        height: 20, 
-        duration: 0.3, 
-        ease: 'power2.out' 
-      });
-      const icon = customCursor.querySelector('i');
-      if (icon) gsap.to(icon, { opacity: 1, scale: 1, duration: 0.3, delay: 0.1 });
-    });
-  }
+  // === Mask tracking circle removed as requested ('remove the circle') ===
 }
-
