@@ -27,44 +27,32 @@
   <link rel="stylesheet" href="./vendor/fontsource/syne/700.css">
   <link rel="stylesheet" href="./vendor/fontsource/syne/800.css">
   <link rel="stylesheet" href="./vendor/remixicon/fonts/remixicon.css">
-  <link rel="stylesheet" href="./css/global.css?v=20260228-9">
+  <link rel="stylesheet" href="./css/global.css?v=20260416-2">
+  <style>
+    /* Instant CSS injection as fallback */
+    .premium-start-btn { pointer-events: all; z-index: 99999999; position: relative; }
+  </style>
 </head>
 
 <body>
-  <div id="site-preloader" class="site-preloader" role="status" aria-label="Loading site content">
-    <div class="skeleton-shell" aria-hidden="true">
-      <div class="skeleton-top">
-        <span class="skeleton-chip"></span>
-        <div class="skeleton-top-actions">
-          <span class="skeleton-chip skeleton-chip-small"></span>
-          <span class="skeleton-circle"></span>
-        </div>
+  <div id="site-preloader" class="site-preloader minh-preloader" role="status" aria-label="Loading site content">
+    <div class="preloader-content">
+      <div class="vinyl-loader">
+        <div class="vinyl-groove"></div>
+        <div class="vinyl-label">R S</div>
       </div>
-      <div class="skeleton-hero">
-        <div class="skeleton-copy">
-          <span class="skeleton-line skeleton-title"></span>
-          <span class="skeleton-line skeleton-title"></span>
-          <span class="skeleton-line"></span>
-          <span class="skeleton-line skeleton-line-short"></span>
-          <span class="skeleton-button"></span>
-        </div>
-        <span class="skeleton-avatar"></span>
-      </div>
-      <div class="skeleton-footer">
-        <span class="skeleton-line skeleton-footer-time"></span>
-        <div class="skeleton-social">
-          <span class="skeleton-social-dot"></span>
-          <span class="skeleton-social-dot"></span>
-          <span class="skeleton-social-dot"></span>
-        </div>
-      </div>
+      <button id="startBtn" class="premium-start-btn" onclick="document.getElementById('site-preloader').classList.add('is-hidden'); document.documentElement.classList.remove('is-loading'); if(window.finishPreload) window.finishPreload();">S T A R T</button>
     </div>
   </div>
   <a href="#main" class="skip-link">Skip to main content</a>
   <div class="main-container">
+    <div class="ambient-glow"></div>
     <header class="header">
       <nav id="nav" class="nav" role="navigation">
-        <a href="index.html" class="nav-brand"><span class="nav-greeting">NAMASTEY</span></a>
+        <a href="index.html" class="nav-brand">
+          <span class="nav-greeting">NAMASTEY</span>
+          <span class="nav-namaste-icon" aria-hidden="true">&#128591;</span>
+        </a>
         <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
           <i class="ri-menu-line nav-icon-menu"></i>
           <i class="ri-close-line nav-icon-close"></i>
@@ -121,7 +109,7 @@
   </div>
   <script src="./vendor/gsap/gsap.min.js"></script>
   <script src="./vendor/gsap/ScrollTrigger.min.js"></script>
-  <script src="./javascript/script.js?v=20260228-10"></script>
+  <script src="./javascript/script.js?v=20260416-2"></script>
 </body>
 
 </html>

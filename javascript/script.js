@@ -11,27 +11,32 @@ const preloader = document.getElementById('site-preloader');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let smoothScrollRaf = null;
 let preloaderDone = false;
-const preloadStartedAt = window.__siteLoadStart || performance.now();
+let startDecodeSequence = null; // To be populated later
+const startBtn = document.getElementById('startBtn');
 
 function finishPreload() {
   if (preloaderDone) return;
   preloaderDone = true;
   document.documentElement.classList.remove('is-loading');
-  preloader?.setAttribute('aria-hidden', 'true');
+  
+  if (preloader) {
+    preloader.classList.add('is-hidden');
+  }
+  
+  // Cinematic Timing: Delay entrance animations so they trigger precisely as the black screen cleanly glides up (500ms)
+  if (window.startDecodeSequence) {
+    setTimeout(window.startDecodeSequence, 500);
+  }
 }
+window.finishPreload = finishPreload;
 
-function hidePreloader() {
-  const minVisibleMs = 1100;
-  const elapsed = performance.now() - preloadStartedAt;
-  const delay = Math.max(0, minVisibleMs - elapsed);
-  window.setTimeout(finishPreload, delay);
+if (startBtn) {
+  startBtn.addEventListener('click', finishPreload);
+} else {
+  // Safe fallback if button doesn't exist
+  window.addEventListener('load', finishPreload);
+  window.setTimeout(finishPreload, 6000);
 }
-
-if (document.readyState === 'complete' || document.readyState === 'interactive') hidePreloader();
-document.addEventListener('DOMContentLoaded', hidePreloader, { once: true });
-window.addEventListener('load', hidePreloader, { once: true });
-window.addEventListener('pageshow', hidePreloader, { once: true });
-window.setTimeout(finishPreload, 6000);
 
 function clearMainHashFromUrl() {
   if (window.location.hash !== '#main' || !history.replaceState) return;
@@ -145,68 +150,239 @@ const backToTop = document.getElementById('backToTop');
 window.addEventListener('scroll', () => backToTop?.classList.toggle('visible', window.scrollY > 300));
 backToTop?.addEventListener('click', () => smoothScrollToY(0));
 
-// === GSAP Animations ===
+// === GSAP Animations & Creative Interactions ===
 if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !prefersReducedMotion) {
   gsap.registerPlugin(ScrollTrigger);
 
-  // Hero stagger - animates from hidden to visible
-  gsap.from('[data-animate]', {
-    opacity: 0,
-    y: 20,
-    duration: 0.8,
-    stagger: 0.1,
-    ease: 'power2.out',
-    delay: 0.1,
-    clearProps: "all"
-  });
-}
+  // These will be triggered from finishPreload() when the START button is clicked
+  window.startDecodeSequence = () => {
+    // Hero entrance - smoother, premium feel
+    gsap.from('.hero-title', { opacity: 0, y: 40, duration: 1.2, ease: 'power3.out', delay: 0.1, clearProps: 'all' });
+    gsap.from('.hero-desc', { opacity: 0, y: 20, duration: 1, ease: 'power3.out', delay: 0.3, clearProps: 'all' });
+    gsap.from('.btn-primary', { opacity: 0, y: 15, duration: 0.8, ease: 'power3.out', delay: 0.5, clearProps: 'all' });
+    gsap.from('.hero-image-wrap', { opacity: 0, scale: 0.9, duration: 1.4, ease: 'expo.out', delay: 0.2, clearProps: 'all' });
+  };
 
-// === Focus bars: mouse-follow interactivity ===
-const focusVisual = document.getElementById('focusVisual');
-const bars = document.querySelectorAll('.pulse-bars .bar');
-
-if (focusVisual && bars.length && !prefersReducedMotion) {
-  focusVisual.addEventListener('mousemove', (e) => {
-    const rect = focusVisual.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    bars.forEach((bar, i) => {
-      const barCenter = (i + 0.5) / bars.length;
-      const influence = Math.max(0, 1 - Math.abs(x - barCenter) * 2.5);
-      bar.style.transform = `scaleY(${1 + influence * 0.35})`;
+  // === Ultra-Premium Minh Pham Style Text Animations ===
+  const greeting = document.querySelector('.nav-greeting');
+  if (greeting) {
+    const originalText = greeting.dataset.original || greeting.textContent.trim();
+    greeting.dataset.original = originalText;
+    greeting.innerHTML = '';
+    
+    greeting.style.display = 'inline-flex';
+    greeting.style.overflow = 'hidden';
+    greeting.style.lineHeight = '1';
+    
+    const chars = [...originalText].map(char => {
+      const wrapper = document.createElement('span');
+      wrapper.style.display = 'inline-flex';
+      wrapper.style.flexDirection = 'column';
+      wrapper.style.position = 'relative';
+      wrapper.style.height = '1em';
+      wrapper.style.minWidth = char.trim() === '' ? '0.5em' : 'auto';
+      
+      const mainChar = document.createElement('span');
+      mainChar.textContent = char;
+      mainChar.style.height = '1em';
+      
+      const hoverChar = document.createElement('span');
+      hoverChar.textContent = char;
+      hoverChar.style.position = 'absolute';
+      hoverChar.style.top = '100%';
+      hoverChar.style.color = 'var(--accent)';
+      
+      wrapper.appendChild(mainChar);
+      wrapper.appendChild(hoverChar);
+      greeting.appendChild(wrapper);
+      
+      return { wrapper, mainChar, hoverChar, char };
     });
-  });
-  focusVisual.addEventListener('mouseleave', () => {
-    bars.forEach((b) => (b.style.transform = ''));
-  });
-}
 
-// === Image hover parallax (mouse follow) ===
-const heroImage = document.getElementById('heroImage');
-const heroFrame = document.querySelector('.hero-image-frame');
+    // 1. "Animated into Namastey" - Page Load Decode Sequence (Minh Pham signature)
+    const scrambleChars = '!<>-_\\/[]{}—=+*^?#_';
+    const oldStart = window.startDecodeSequence;
+    window.startDecodeSequence = () => {
+      if (oldStart) oldStart();
+      gsap.delayedCall(0.5, () => {
+        chars.forEach((c, i) => {
+          let iterations = 0;
+          const maxIterations = 8 + (i * 3); // Staggered reveal
+          
+          let scrambleInterval = setInterval(() => {
+            if (iterations >= maxIterations) {
+              clearInterval(scrambleInterval);
+              c.mainChar.textContent = c.char;
+              c.hoverChar.textContent = c.char;
+              gsap.fromTo(c.mainChar, { color: 'var(--accent)', scale: 1.2 }, { color: 'var(--text)', scale: 1, duration: 0.4 });
+            } else {
+              const randomChar = scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+              c.mainChar.textContent = randomChar;
+              c.hoverChar.textContent = randomChar;
+              iterations++;
+            }
+          }, 50);
+        });
+      });
+    };
 
-if (heroImage && heroFrame && !prefersReducedMotion) {
-  heroFrame.addEventListener('mousemove', (e) => {
-    const rect = heroFrame.getBoundingClientRect();
-    const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
-    const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
-    gsap?.to(heroImage, {
-      x: x * 8,
-      y: y * 8,
-      scale: 1.03,
-      duration: 0.4,
-      ease: 'power2.out'
+    // 2. 3D Hover Roll Effect
+    greeting.addEventListener('mouseenter', () => {
+      chars.forEach((c, i) => {
+        gsap.to([c.mainChar, c.hoverChar], {
+          y: '-100%', 
+          duration: 0.4, 
+          ease: 'power3.inOut', 
+          delay: i * 0.03
+        });
+      });
     });
+
+    greeting.addEventListener('mouseleave', () => {
+      chars.forEach((c, i) => {
+        gsap.to([c.mainChar, c.hoverChar], {
+          y: '0%', 
+          duration: 0.4, 
+          ease: 'power3.inOut', 
+          delay: i * 0.03
+        });
+      });
+    });
+  }
+
+  // === Infinite Levitation ===
+  gsap.to('.hero-image-wrap', {
+    y: -12,
+    duration: 3,
+    ease: 'sine.inOut',
+    yoyo: true,
+    repeat: -1,
+    delay: 1.4 // Starts exactly as entrance animation finishes
   });
 
-  heroFrame.addEventListener('mouseleave', () => {
-    gsap?.to(heroImage, {
-      x: 0,
-      y: 0,
-      scale: 1,
-      duration: 0.5,
-      ease: 'power2.out'
+  // === Ambient Music Particles ===
+  const particleContainer = document.createElement('div');
+  particleContainer.className = 'ambient-particles';
+  document.querySelector('.main-container')?.prepend(particleContainer);
+  
+  const notes = ['\u2669', '\u266A', '\u266B', '\u266C', '\u2728'];
+  for(let i=0; i<12; i++) {
+    const p = document.createElement('div');
+    p.className = 'ambient-particle';
+    p.textContent = notes[Math.floor(Math.random() * notes.length)];
+    particleContainer.appendChild(p);
+    
+    gsap.set(p, {
+      x: () => Math.random() * window.innerWidth,
+      y: () => window.innerHeight + Math.random() * 200,
+      scale: () => 0.5 + Math.random() * 1.5,
+      opacity: () => 0.05 + Math.random() * 0.15,
+      rotation: () => Math.random() * 360
     });
-  });
+    
+    gsap.to(p, {
+      y: () => -100,
+      x: () => '+=' + (Math.random() * 100 - 50),
+      rotation: () => '+=' + (Math.random() * 180),
+      duration: () => 15 + Math.random() * 25,
+      ease: 'none',
+      repeat: -1,
+      delay: () => Math.random() * -30
+    });
+  }
+
+  // === Magnetic Button ===
+  const magneticBtn = document.querySelector('.btn-primary');
+  if (magneticBtn) {
+    magneticBtn.addEventListener('mousemove', (e) => {
+      const rect = magneticBtn.getBoundingClientRect();
+      const h = rect.width / 2;
+      const v = rect.height / 2;
+      const x = e.clientX - rect.left - h;
+      const y = e.clientY - rect.top - v;
+      
+      gsap.to(magneticBtn, {
+        x: x * 0.3,
+        y: y * 0.3,
+        duration: 0.4,
+        ease: 'power3.out'
+      });
+      
+      const icon = magneticBtn.querySelector('i');
+      if (icon) {
+        gsap.to(icon, { x: x * 0.2, y: y * 0.2, duration: 0.3, ease: 'power3.out' });
+      }
+    });
+
+    magneticBtn.addEventListener('mouseleave', () => {
+      gsap.to(magneticBtn, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.3)' });
+      const icon = magneticBtn.querySelector('i');
+      if (icon) gsap.to(icon, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.3)' });
+    });
+  }
+
+  // === Ultra-Premium 3D Magnetic Image Tilt ===
+  const heroImage = document.getElementById('heroImage');
+  const heroFrame = document.querySelector('.hero-image-frame');
+
+  if (heroImage && heroFrame) {
+    heroFrame.addEventListener('mousemove', (e) => {
+      const rect = heroFrame.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const distanceX = x - centerX;
+      const distanceY = y - centerY;
+      
+      const rotateX = -distanceY * 0.08;
+      const rotateY = distanceX * 0.08;
+
+      // Smooth 3D tilt of the container
+      gsap.to(heroFrame, {
+        rotationX: rotateX,
+        rotationY: rotateY,
+        x: distanceX * 0.15,
+        y: distanceY * 0.15,
+        duration: 0.6,
+        ease: 'power2.out',
+        transformPerspective: 1200
+      });
+      // Add subtle glow tracing the mouse
+      heroFrame.style.boxShadow = `${-rotateY}px ${rotateX}px 40px rgba(79, 70, 229, 0.4)`;
+      
+      // Secondary parallax on the image inside for immense depth
+      gsap.to(heroImage, {
+        x: distanceX * 0.06,
+        y: distanceY * 0.06,
+        scale: 1.08,
+        duration: 0.6,
+        ease: 'power2.out'
+      });
+    });
+
+    heroFrame.addEventListener('mouseleave', () => {
+      gsap.to(heroFrame, {
+        rotationX: 0,
+        rotationY: 0,
+        x: 0,
+        y: 0,
+        boxShadow: 'var(--shadow)',
+        duration: 1.2,
+        ease: 'elastic.out(1, 0.3)'
+      });
+      
+      gsap.to(heroImage, {
+        x: 0,
+        y: 0,
+        scale: 1,
+        duration: 1.2,
+        ease: 'elastic.out(1, 0.3)'
+      });
+    });
+  }
 
   // Focus section scroll reveal
   gsap.from('.focus-heading, .focus-hint', {
@@ -235,12 +411,12 @@ if (heroImage && heroFrame && !prefersReducedMotion) {
   });
 }
 
-// Music cursor + note burst for interactive elements
-const supportsHoverCursor = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-const interactiveSelector = 'a, button, .btn-primary';
+
+// === Fully Animated Premium Custom Cursor ===
+const interactiveSelector = 'a, button, input, .btn-primary, .focus-visual, .nav-toggle, .theme-toggle, .work-link, .contact-link';
 
 function spawnNoteBurst(x, y, count = 6) {
-  const notes = ['\u2669', '\u266A', '\u266B', '\u266C'];
+  const notes = ['\\u2669', '\\u266A', '\\u266B', '\\u266C'];
   for (let i = 0; i < count; i += 1) {
     const note = document.createElement('span');
     note.className = 'note-particle';
@@ -255,48 +431,115 @@ function spawnNoteBurst(x, y, count = 6) {
   }
 }
 
-if (supportsHoverCursor) {
-  const musicCursor = document.createElement('div');
-  musicCursor.className = 'music-cursor';
-  musicCursor.innerHTML = '<i class="ri-music-2-fill" aria-hidden="true"></i>';
-  document.body.appendChild(musicCursor);
-  let hoverInteractive = null;
+if (typeof gsap !== 'undefined') {
+  const customCursor = document.createElement('div');
+  customCursor.className = 'custom-cursor';
+  customCursor.innerHTML = '<i class="ri-music-2-fill" aria-hidden="true"></i>';
+  document.body.appendChild(customCursor);
 
-  const setInteractiveHover = (target) => {
-    if (hoverInteractive === target) return;
-    if (hoverInteractive) hoverInteractive.classList.remove('music-hover-target');
-    hoverInteractive = target;
-    if (hoverInteractive) {
-      hoverInteractive.classList.add('music-hover-target');
-      musicCursor.classList.add('visible');
+  const cursorX = gsap.quickTo(customCursor, "x", {duration: 0.25, ease: "power3"});
+  const cursorY = gsap.quickTo(customCursor, "y", {duration: 0.25, ease: "power3"});
+
+  gsap.set(customCursor, { xPercent: -50, yPercent: -50, x: window.innerWidth / 2, y: window.innerHeight / 2 });
+
+  // Hide the default cursor specifically once the custom cursor is successfully initialized.
+  document.body.style.cursor = 'none';
+  const style = document.createElement('style');
+  style.innerHTML = '* { cursor: none !important; }';
+  document.head.appendChild(style);
+
+  let activeHover = false;
+
+  document.addEventListener('pointermove', (e) => {
+    cursorX(e.clientX);
+    cursorY(e.clientY);
+  });
+
+  const setHoverState = (isHover) => {
+    if (activeHover === isHover) return;
+    activeHover = isHover;
+    if (isHover) {
+      customCursor.classList.add('hover-active');
+      gsap.to(customCursor, { scale: 1.25, rotation: -10, duration: 0.3, ease: 'back.out(1.5)' });
     } else {
-      musicCursor.classList.remove('visible');
+      customCursor.classList.remove('hover-active');
+      gsap.to(customCursor, { scale: 1, rotation: 0, duration: 0.3, ease: 'power2.out' });
     }
   };
 
-  document.addEventListener('pointermove', (e) => {
-    musicCursor.style.left = `${e.clientX + 14}px`;
-    musicCursor.style.top = `${e.clientY + 12}px`;
-  });
-
   document.addEventListener('pointerover', (e) => {
-    const target = e.target.closest(interactiveSelector);
-    if (target) setInteractiveHover(target);
+    if (e.target.closest(interactiveSelector)) setHoverState(true);
   });
 
   document.addEventListener('pointerout', (e) => {
-    if (!hoverInteractive) return;
-    const next = e.relatedTarget;
-    if (next && hoverInteractive.contains(next)) return;
-    const nextInteractive = next?.closest?.(interactiveSelector) || null;
-    setInteractiveHover(nextInteractive);
+    if (activeHover) {
+      const next = e.relatedTarget;
+      if (!next || !next.closest(interactiveSelector)) setHoverState(false);
+    }
   });
+
+  document.addEventListener('click', (e) => {
+    const x = e.clientX || window.innerWidth / 2;
+    const y = e.clientY || window.innerHeight / 2;
+    if (e.target.closest(interactiveSelector)) {
+      spawnNoteBurst(x, y, 9);
+      // Small pop without clearing props to avoid resetting X/Y coordinates
+      gsap.fromTo(customCursor, { scale: 0.8 }, { scale: 1.25, duration: 0.4, ease: "elastic.out(1, 0.4)" });
+    } else {
+      spawnNoteBurst(x, y, 4);
+    }
+  });
+
+  // === Creative Magnetic Hero Image Interaction ===
+  const heroWrap = document.querySelector('.hero-image-wrap');
+  if (heroWrap) {
+    heroWrap.addEventListener('mousemove', (e) => {
+      const rect = heroWrap.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      gsap.to(heroWrap, {
+        x: x * 0.15,
+        y: y * 0.15,
+        rotateX: y * -0.05,
+        rotateY: x * 0.05,
+        duration: 0.4,
+        ease: 'power2.out'
+      });
+    });
+    heroWrap.addEventListener('mouseleave', () => {
+      gsap.to(heroWrap, { x: 0, y: 0, rotateX: 0, rotateY: 0, duration: 0.8, ease: 'elastic.out(1, 0.3)' });
+    });
+  }
+
+  // === Ultra-Premium Text Lens Hover (Flawless X-Ray) ===
+  const heroTitle = document.querySelector('.hero-title');
+  if (heroTitle && customCursor) {
+    heroTitle.addEventListener('mouseenter', () => {
+      // Morph the cursor into a massive Glassmorphism X-Ray Lens
+      customCursor.classList.add('lens-active');
+      gsap.to(customCursor, { 
+        width: 180, 
+        height: 180, 
+        duration: 0.4, 
+        ease: 'back.out(1.2)' 
+      });
+      // Hide the music icon inside it
+      const icon = customCursor.querySelector('i');
+      if (icon) gsap.to(icon, { opacity: 0, scale: 0, duration: 0.2 });
+    });
+
+    heroTitle.addEventListener('mouseleave', () => {
+      // Snap it back to a beautiful music cursor
+      customCursor.classList.remove('lens-active');
+      gsap.to(customCursor, { 
+        width: 20, 
+        height: 20, 
+        duration: 0.3, 
+        ease: 'power2.out' 
+      });
+      const icon = customCursor.querySelector('i');
+      if (icon) gsap.to(icon, { opacity: 1, scale: 1, duration: 0.3, delay: 0.1 });
+    });
+  }
 }
 
-document.addEventListener('click', (e) => {
-  const target = e.target.closest(interactiveSelector);
-  if (!target) return;
-  const x = e.clientX || window.innerWidth / 2;
-  const y = e.clientY || window.innerHeight / 2;
-  spawnNoteBurst(x, y, 6);
-});
