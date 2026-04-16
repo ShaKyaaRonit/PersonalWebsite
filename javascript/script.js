@@ -23,12 +23,12 @@ function finishPreload() {
     const rect = startBtn ? startBtn.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
-    
+
     // Massive Music Wipe Transition
     if (typeof spawnNoteBurst === 'function') {
       spawnNoteBurst(x, y, 25);
     }
-    
+
     preloader.classList.add('is-hidden');
   }
 
@@ -165,36 +165,11 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !pref
 
   // These will be triggered from finishPreload() when the START button is clicked
   window.startDecodeSequence = () => {
-    // 1. Prepare Hero Title for Musical Stagger (Letter-by-letter)
-    const title = document.querySelector('.hero-title');
-    if (title) {
-        const text = title.innerHTML;
-        // Don't split if already split
-        if (!title.querySelector('.char-reveal')) {
-            const html = text.replace(/([^\s<br>])/g, "<span class='char-reveal' style='display:inline-block; opacity:0; transform:translateY(30px)'>$1</span>");
-            title.innerHTML = html;
-        }
-        
-        gsap.to(title.querySelectorAll('.char-reveal'), {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            stagger: 0.05,
-            ease: 'back.out(1.7)',
-            onStart: () => {
-                // Occassional notes from title as it reveals
-                gsap.delayedCall(0.1, () => {
-                   const rect = title.getBoundingClientRect();
-                   if (typeof spawnNoteBurst === 'function') spawnNoteBurst(rect.left + 50, rect.top + 20, 3);
-                });
-            }
-        });
-    }
-
-    // 2. Other elements reveal
-    gsap.from('.hero-desc', { opacity: 0, y: 20, duration: 1, ease: 'power3.out', delay: 0.5 });
-    gsap.from('.btn-primary', { opacity: 0, y: 15, duration: 0.8, ease: 'power3.out', delay: 0.8 });
-    gsap.from('.hero-image-wrap', { opacity: 0, scale: 0.7, rotation: -10, duration: 1.5, ease: 'expo.out', delay: 0.3 });
+    // 1. Clean, cinematic reveal for hero elements
+    gsap.from('.hero-title', { opacity: 0, y: 30, duration: 1.2, ease: 'power3.out', delay: 0.1 });
+    gsap.from('.hero-desc', { opacity: 0, y: 20, duration: 1, ease: 'power3.out', delay: 0.3 });
+    gsap.from('.btn-primary', { opacity: 0, y: 15, duration: 0.8, ease: 'power3.out', delay: 0.5 });
+    gsap.from('.hero-image-wrap', { opacity: 0, scale: 0.9, duration: 1.4, ease: 'expo.out', delay: 0.2 });
   };
 
   // === Ultra-Premium Minh Pham Style Text Animations ===
@@ -467,7 +442,9 @@ function spawnNoteBurst(x, y, count = 6) {
   }
 }
 
-if (typeof gsap !== 'undefined') {
+const isTouchDevice = ('ontouchstart' in window) && (window.innerWidth <= 768);
+
+if (!isTouchDevice) {
   const customCursor = document.createElement('div');
   customCursor.className = 'custom-cursor';
   customCursor.innerHTML = '<i class="ri-music-2-fill" aria-hidden="true"></i>';
@@ -478,14 +455,12 @@ if (typeof gsap !== 'undefined') {
 
   gsap.set(customCursor, { xPercent: -50, yPercent: -50, x: window.innerWidth / 2, y: window.innerHeight / 2 });
 
-  // Hide the default cursor specifically once the custom cursor is successfully initialized.
   document.body.style.cursor = 'none';
   const style = document.createElement('style');
   style.innerHTML = '* { cursor: none !important; }';
   document.head.appendChild(style);
 
   let activeHover = false;
-
   document.addEventListener('pointermove', (e) => {
     cursorX(e.clientX);
     cursorY(e.clientY);
@@ -517,11 +492,7 @@ if (typeof gsap !== 'undefined') {
   document.addEventListener('click', (e) => {
     const x = e.clientX || window.innerWidth / 2;
     const y = e.clientY || window.innerHeight / 2;
-    
-    // User requested: "not the text" click transition
     if (e.target.closest('.hero-content')) return;
-
-    // Trigger big burst on "music" (image) and interactive elements
     if (e.target.closest('.hero-visual, .custom-cursor, ' + interactiveSelector)) {
       spawnNoteBurst(x, y, 12);
       gsap.fromTo(customCursor, { scale: 0.8 }, { scale: 1.25, duration: 0.4, ease: "elastic.out(1, 0.4)" });
@@ -529,6 +500,14 @@ if (typeof gsap !== 'undefined') {
       spawnNoteBurst(x, y, 6);
     }
   });
+} else {
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.hero-content')) return;
+    const x = e.clientX || window.innerWidth / 2;
+    const y = e.clientY || window.innerHeight / 2;
+    spawnNoteBurst(x, y, 6);
+  });
+};
 
   // === Creative Magnetic Hero Image Interaction ===
   const heroWrap = document.querySelector('.hero-image-wrap');
@@ -551,5 +530,6 @@ if (typeof gsap !== 'undefined') {
     });
   }
 
+
   // === Mask tracking circle removed as requested ('remove the circle') ===
-}
+
