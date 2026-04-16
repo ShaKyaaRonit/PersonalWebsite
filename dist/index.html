@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" class="is-loading">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description"
+    content="Ronit Shakya – Web Developer building exceptional digital experiences. Frontend & full-stack.">
+  <meta name="keywords" content="Ronit Shakya, Web Developer, Frontend, Full-stack, Portfolio">
+  <meta name="author" content="Ronit Shakya">
+  <meta property="og:title" content="Ronit Shakya | Portfolio">
+  <meta property="og:description" content="Building exceptional digital experiences with modern technologies.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" href="./assets/logo.ico">
+  <title>Ronit Shakya | Portfolio</title>
+  <script>
+    window.__siteLoadStart = performance.now();
+  </script>
+  <link rel="stylesheet" href="./vendor/fontsource/dm-sans/300.css">
+  <link rel="stylesheet" href="./vendor/fontsource/dm-sans/400.css">
+  <link rel="stylesheet" href="./vendor/fontsource/dm-sans/500.css">
+  <link rel="stylesheet" href="./vendor/fontsource/dm-sans/600.css">
+  <link rel="stylesheet" href="./vendor/fontsource/syne/400.css">
+  <link rel="stylesheet" href="./vendor/fontsource/syne/500.css">
+  <link rel="stylesheet" href="./vendor/fontsource/syne/600.css">
+  <link rel="stylesheet" href="./vendor/fontsource/syne/700.css">
+  <link rel="stylesheet" href="./vendor/fontsource/syne/800.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/global.css?v=20260416-2">
+  <style>
+    /* Instant CSS injection as fallback */
+    .premium-start-btn { pointer-events: all; z-index: 99999999; position: relative; }
+  </style>
+</head>
+
+<body>
+  <div id="site-preloader" class="site-preloader minh-preloader" role="status" aria-label="Loading site content">
+    <div class="preloader-content">
+      <div class="vinyl-loader">
+        <div class="vinyl-groove"></div>
+        <div class="vinyl-label">R S</div>
+      </div>
+      <button id="startBtn" class="premium-start-btn" onclick="document.getElementById('site-preloader').classList.add('is-hidden'); document.documentElement.classList.remove('is-loading'); if(window.finishPreload) window.finishPreload();">S T A R T</button>
+    </div>
+  </div>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <div class="main-container">
+    <div class="ambient-glow"></div>
+    <header class="header">
+      <nav id="nav" class="nav" role="navigation">
+        <a href="index.html" class="nav-brand">
+          <span class="nav-greeting">NAMASTEY</span>
+          <span class="nav-namaste-icon" aria-hidden="true">&#128591;</span>
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i class="ri-menu-line nav-icon-menu"></i>
+          <i class="ri-close-line nav-icon-close"></i>
+        </button>
+        <div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
+        <div class="nav-right" id="navMenu">
+          <a href="index.html" class="nav-link">Home</a>
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+            <i class="ri-moon-line theme-icon-moon"></i>
+            <i class="ri-sun-line theme-icon-sun"></i>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main" class="main">
+      <section class="hero">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <h1 class="hero-title" data-animate>Ronit<br>Shakya</h1>
+            <p class="hero-desc" data-animate>I build exceptional digital experiences with modern frontend technologies.
+              Expanding into backend development to become a full-stack developer.</p>
+            <a href="mailto:shkronit@gmail.com" class="btn-primary" data-animate>
+              Get in touch <i class="ri-arrow-right-up-line"></i>
+            </a>
+          </div>
+          <div class="hero-visual" data-animate>
+            <div class="hero-image-wrap">
+              <div class="hero-image-frame">
+                <img src="./assets/img.jpg" alt="Ronit Shakya" draggable="false" ondragstart="return false;"
+                  id="heroImage">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer" id="footer" role="contentinfo">
+      <span class="footer-time" id="footerDateTime">Year | Date | Time</span>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/in/ronit-shakya-9909b4332/" target="_blank" rel="noopener noreferrer"
+          aria-label="LinkedIn"><i class="ri-linkedin-line"></i></a>
+        <a href="https://github.com/ShaKyaaRonit" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i
+            class="ri-github-line"></i></a>
+        <a href="https://www.instagram.com/shak_ya_ronit/" target="_blank" rel="noopener noreferrer"
+          aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+      </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="Back to top" title="Back to top">
+      <i class="ri-arrow-up-s-line"></i>
+    </button>
+  </div>
+  <script src="./vendor/gsap/gsap.min.js"></script>
+  <script src="./vendor/gsap/ScrollTrigger.min.js"></script>
+  <script src="./javascript/script.js?v=20260416-2"></script>
+</body>
+
+</html>
